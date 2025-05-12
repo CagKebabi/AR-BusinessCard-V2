@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { MindARThree } from "mind-ar/dist/mindar-image-three.prod.js";
+import { SVGLoader } from "three/examples/jsm/Addons.js";
 import target from "./assets/target.mind?url";
 import gsap from "gsap";
 
@@ -50,6 +51,46 @@ document.addEventListener("DOMContentLoaded", () => {
       directionalLight.position.set(0, 1, 1);
       scene.add(directionalLight);
 
+      // SVG yükleyici
+      const svgLoader = new SVGLoader();
+      let svgGroup = new THREE.Group();
+
+      svgLoader.load(
+        "./assets/websiteIcon.svg",
+        (data) => {
+          const paths = data.paths;
+          //const group = new THREE.Group();
+
+          for ( let i = 0; i < paths.length; i ++ ) {
+
+            const path = paths[i];
+
+            const material = new THREE.MeshBasicMaterial( {
+              color: path.color || 0x000000,
+              side: THREE.DoubleSide,
+              depthWrite: false
+            } );
+
+            const shapes = SVGLoader.createShapes( path );
+
+            for ( let j = 0; j < shapes.length; j ++ ) {
+
+              const shape = shapes[ j ];
+              const geometry = new THREE.ShapeGeometry( shape );
+              const mesh = new THREE.Mesh( geometry, material );
+              svgGroup.add( mesh );
+
+            }
+          }
+        },
+        (xhr) => {
+          console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+        },
+        (error) => {
+          console.error( 'An error happened', error );
+        }
+      )
+
       // Platform (Cylinder)
       const platformGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.05, 32);
       const platformMaterial = new THREE.MeshBasicMaterial({
@@ -75,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
       anchor.group.add(platformMesh2);
       anchor.group.add(platformMesh3);
       anchor.group.add(platformMesh4);
+      anchor.group.add(svgGroup)
 
       anchor.onTargetFound = () => {
         gsap
