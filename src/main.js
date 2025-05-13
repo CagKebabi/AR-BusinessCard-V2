@@ -1,9 +1,15 @@
 import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { MindARThree } from "mind-ar/dist/mindar-image-three.prod.js";
 import { SVGLoader } from "three/examples/jsm/Addons.js";
 import target from "./assets/target.mind?url";
 import gsap from "gsap";
 import { mockWithVideo } from "./libs/camera-mock";
+import { TextureLoader } from "three";
+import websiteIcon from "./assets/website4.svg"
+import locationIcon from "./assets/locationColored2.svg"
+import contactsIcon from "./assets/contacts2.svg"
+import buttonMatcapTexture from "./assets/buttonMatcap7.png"
 
 document.addEventListener("DOMContentLoaded", () => {
   const start = async () => {
@@ -26,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       }
 
-      mockWithVideo("./assets/mockvideo.mp4");
+      //mockWithVideo("./assets/mockvideo.mp4");
 
       // Kamera erişimi iste
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -54,6 +60,10 @@ document.addEventListener("DOMContentLoaded", () => {
       directionalLight.position.set(0, 1, 1);
       scene.add(directionalLight);
 
+      // Texture yükleyici
+      const textureLoader = new TextureLoader();
+      const buttonMatcap = textureLoader.load(buttonMatcapTexture)
+
       // SVG yükleyici
       const svgLoader = new SVGLoader();
       let svgGroup = new THREE.Group();
@@ -62,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let svgGroup4 = new THREE.Group();
 
       svgLoader.load(
-        "./assets/website4.svg",
+        websiteIcon,
         (data) => {
           const paths = data.paths;
           console.log('SVG yüklendi, yollar:', paths.length);
@@ -118,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
               mesh.position.y -= center.y;
               
               // SVG mesh'lerini platformun üstüne taşı
-              mesh.position.z += zOffset + (index * 0.001); // Daha yüksek z pozisyonu
+              mesh.position.z += zOffset + (index * 0.09); // Daha yüksek z pozisyonu
               
               // SVG mesh'lerinin renderOrder'ını çok yüksek yap
               if (mesh.material) {
@@ -134,9 +144,9 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           
           // SVG grubunu ölçeklendir ve konumlandır
-          svgGroup.scale.set(0.00025, 0.00025, 0.00025); // SVG boyutunu küçült
+          svgGroup.scale.set(0.0015, 0.0015, 0.0015); // SVG boyutunu küçült
           svgGroup.rotation.z = -Math.PI; // SVG'yi döndür
-          svgGroup.position.z = 0.02; // SVG'yi öne al (yüksek z değeri)
+          svgGroup.position.z = 0.08; // SVG'yi öne al (yüksek z değeri)
           
           console.log('SVG grubu hazır, mesh sayısı:', svgGroup.children.length);
         },
@@ -149,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
       )
 
       svgLoader.load(
-        "./assets/locationColored2.svg",
+        locationIcon,
         (data) => {
           const paths = data.paths;
           console.log('SVG yüklendi, yollar:', paths.length);
@@ -221,10 +231,10 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           
           // SVG grubunu ölçeklendir ve konumlandır
-          svgGroup2.scale.set(0.00025, 0.00025, 0.00025); // SVG boyutunu küçült
+          svgGroup2.scale.set(0.0008, 0.0008, 0.0008); // SVG boyutunu küçült
           svgGroup2.rotation.z = Math.PI; // SVG'yi döndür
           //svgGroup2.rotation.y = Math.PI / 2; // SVG'yi yatay konumlandır
-          svgGroup2.position.z = 0.02; // SVG'yi öne al (yüksek z değeri)
+          svgGroup2.position.z = 0.08; // SVG'yi öne al (yüksek z değeri)
           
           console.log('SVG grubu hazır, mesh sayısı:', svgGroup2.children.length);
         },
@@ -237,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
       )
 
       svgLoader.load(
-        "./assets/contacts2.svg",
+        contactsIcon,
         (data) => {
           const paths = data.paths;
           console.log('SVG yüklendi, yollar:', paths.length);
@@ -309,10 +319,10 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           
           // SVG grubunu ölçeklendir ve konumlandır
-          svgGroup3.scale.set(0.00025, 0.00025, 0.00025); // SVG boyutunu küçült
+          svgGroup3.scale.set(0.015, 0.015, 0.015); // SVG boyutunu küçült
           svgGroup3.rotation.z = Math.PI; // SVG'yi döndür
           //svgGroup2.rotation.y = Math.PI / 2; // SVG'yi yatay konumlandır
-          svgGroup3.position.z = 0.02; // SVG'yi öne al (yüksek z değeri)
+          svgGroup3.position.z = 0.08; // SVG'yi öne al (yüksek z değeri)
           
           console.log('SVG grubu hazır, mesh sayısı:', svgGroup3.children.length);
         },
@@ -325,15 +335,22 @@ document.addEventListener("DOMContentLoaded", () => {
       )
 
       // Platform (Cylinder)
-      const platformGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.05, 32);
-      const platformMaterial = new THREE.MeshBasicMaterial({
-        color: 0xffa901,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 1,
-        depthWrite: true,
-        //renderOrder: 1 // SVG'den daha düşük renderOrder değeri
-      });
+      const platformGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.08, 32);
+      const platformMaterial = new THREE.MeshMatcapMaterial({
+        matcap: buttonMatcap,
+        //normalMap: new THREE.TextureLoader().load('path/to/normal-map.png'),
+        normalScale: new THREE.Vector2(0.5, 0.5), // Normal map etkisini ayarlayabilirsiniz
+        //side: THREE.DoubleSide,
+        //flatShading: true,
+      })
+      // const platformMaterial = new THREE.MeshBasicMaterial({
+      //   color: 0xffa901,
+      //   side: THREE.DoubleSide,
+      //   transparent: true,
+      //   opacity: 1,
+      //   depthWrite: true,
+      //   //renderOrder: 1 // SVG'den daha düşük renderOrder değeri
+      // });
 
       const platformMesh = new THREE.Mesh(platformGeometry, platformMaterial);
 
@@ -351,90 +368,213 @@ document.addEventListener("DOMContentLoaded", () => {
       platformMesh3.rotation.x = -Math.PI / 2;
       platformMesh4.rotation.x = -Math.PI / 2;
 
+      const buttonGroup1 = new THREE.Group();
+      buttonGroup1.add(platformMesh);
+      buttonGroup1.add(svgGroup);
+
+      const buttonGroup2 = new THREE.Group();
+      buttonGroup2.add(platformMesh2);
+      buttonGroup2.add(svgGroup2);
+
+      const buttonGroup3 = new THREE.Group();
+      buttonGroup3.add(platformMesh3);
+      buttonGroup3.add(svgGroup3);
+
       // Modelleri anchor'a ekle
       const anchor = mindarThree.addAnchor(0);
-      anchor.group.add(platformMesh);
-      anchor.group.add(platformMesh2);
-      anchor.group.add(platformMesh3);
-      anchor.group.add(platformMesh4);
-      anchor.group.add(svgGroup);
-      anchor.group.add(svgGroup2);
-      anchor.group.add(svgGroup3);
+      anchor.group.add(buttonGroup1);
+      anchor.group.add(buttonGroup2);
+      anchor.group.add(buttonGroup3);
+      // anchor.group.add(platformMesh);
+      // anchor.group.add(platformMesh2);
+      // anchor.group.add(platformMesh3);
+      // anchor.group.add(svgGroup);
+      // anchor.group.add(svgGroup2);
+      // anchor.group.add(svgGroup3);
 
       anchor.onTargetFound = () => {
         gsap
           .timeline()
           .fromTo(
-            platformMesh.scale,
+            buttonGroup1.scale,
             { x: 0, y: 0, z: 0 },
-            { x: 0.5, y: 0.5, z: 0.5, duration: 1, ease: "power2.inOut" }
+            { x: 0.3, y: 0.3, z: 0.3, duration: 0.35, ease: "power2.inOut" }
           )
           .fromTo(
-            platformMesh.position,
+            buttonGroup1.position,
             { x: 0, y: 0 },
-            { x: -0.75, y: -0.4, duration: 1, ease: "power2.inOut" }
+            { x: -0.35, y: -0.5, duration: 0.35, ease: "elastic.out(1,0.75)" }
           )
           .fromTo(
-            svgGroup.scale,
+            buttonGroup2.scale,
             { x: 0, y: 0, z: 0 },
-            { x: 0.00045, y: 0.00045, z: 0.00045, duration: 1, ease: "power2.inOut" }, "<"
+            { x: 0.3, y: 0.3, z: 0.3, duration: 0.35, ease: "power2.inOut" }
           )
           .fromTo(
-            svgGroup.position,
-            { x: 0, y: 0 },
-            { x: -0.75, y: -0.4, duration: 1, ease: "power2.inOut" }, "<"
-          )
-          .fromTo(
-            platformMesh2.scale,
+            buttonGroup2.position,
             { x: 0, y: 0, z: 0 },
-            { x: 0.5, y: 0.5, z: 0.5, duration: 1, ease: "power2.inOut" }
+            { x: 0, y: -0.5, z: 0, duration: 0.35, ease: "elastic.out(1,0.75)" }
           )
+          // .fromTo(
+          //   platformMesh2.scale,
+          //   { x: 0, y: 0, z: 0 },
+          //   { x: 0.3, y: 0.3, z: 0.3, duration: 1, ease: "power2.inOut" }
+          // )
+          // .fromTo(
+          //   platformMesh2.position,
+          //   { x: 0, y: 0, z: 0 },
+          //   { x: 0, y: -0.4, z: 0, duration: 1, ease: "power2.inOut" }
+          // )
+          // .fromTo(
+          //   svgGroup2.scale,
+          //   { x: 0, y: 0, z: 0 },
+          //   { x: 0.00025, y: 0.00025, z: 0.00025, duration: 1, ease: "power2.inOut" }, "<"
+          // )
+          // .fromTo(
+          //   svgGroup2.position,
+          //   { x: 0, y: 0 },
+          //   { x: -0, y: -0.4, duration: 1, ease: "power2.inOut" }, "<"
+          // )
           .fromTo(
-            platformMesh2.position,
+            buttonGroup3.scale,
             { x: 0, y: 0, z: 0 },
-            { x: -0.22, y: -0.4, z: 0, duration: 1, ease: "power2.inOut" }
+            { x: 0.3, y: 0.3, z: 0.3, duration: 0.35, ease: "power2.inOut" }
           )
           .fromTo(
-            svgGroup2.scale,
+            buttonGroup3.position,
             { x: 0, y: 0, z: 0 },
-            { x: 0.00040, y: 0.00040, z: 0.00040, duration: 1, ease: "power2.inOut" }, "<"
+            { x: 0.35, y: -0.5, z: 0, duration: 0.35, ease: "elastic.out(1,0.75)" }
           )
-          .fromTo(
-            svgGroup2.position,
-            { x: 0, y: 0 },
-            { x: -0.22, y: -0.4, duration: 1, ease: "power2.inOut" }, "<"
-          )
-          .fromTo(
-            platformMesh3.scale,
-            { x: 0, y: 0, z: 0 },
-            { x: 0.5, y: 0.5, z: 0.5, duration: 1, ease: "power2.inOut" }
-          )
-          .fromTo(
-            platformMesh3.position,
-            { x: 0, y: 0, z: 0 },
-            { x: 0.31, y: -0.4, z: 0, duration: 1, ease: "power2.inOut" }
-          )
-          .fromTo(
-            svgGroup3.scale,
-            { x: 0, y: 0, z: 0 },
-            { x: 0.007, y: 0.007, z: 0.007, duration: 1, ease: "power2.inOut" }, "<"
-          )
-          .fromTo(
-            svgGroup3.position,
-            { x: 0, y: 0 },
-            { x: 0.31, y: -0.4, duration: 1, ease: "power2.inOut" }, "<"
-          )
-          .fromTo(
-            platformMesh4.scale,
-            { x: 0, y: 0, z: 0 },
-            { x: 0.5, y: 0.5, z: 0.5, duration: 1, ease: "power2.inOut" }
-          )
-          .fromTo(
-            platformMesh4.position,
-            { x: 0, y: 0, z: 0 },
-            { x: 0.84, y: -0.4, z: 0, duration: 1, ease: "power2.inOut" }
-          );
+          .to(svgGroup.scale,{x:0.002,y:0.002,z:0.002,duration:1.5,ease:"power2.inOut",yoyo:true,repeat:-1},"<")
+          .to(svgGroup2.scale,{x:0.001,y:0.001,z:0.001,duration:1.5,ease:"power2.inOut",yoyo:true,repeat:-1},"<")
+          .to(svgGroup3.scale,{x:0.019,y:0.019,z:0.019,duration:1.5,ease:"power2.inOut",yoyo:true,repeat:-1},"<")
+          // .fromTo(
+          //   platformMesh3.scale,
+          //   { x: 0, y: 0, z: 0 },
+          //   { x: 0.3, y: 0.3, z: 0.3, duration: 1, ease: "power2.inOut" }
+          // )
+          // .fromTo(
+          //   platformMesh3.position,
+          //   { x: 0, y: 0, z: 0 },
+          //   { x: 0.35, y: -0.4, z: 0, duration: 1, ease: "power2.inOut" }
+          // )
+          // .fromTo(
+          //   svgGroup3.scale,
+          //   { x: 0, y: 0, z: 0 },
+          //   { x: 0.0045, y: 0.0045, z: 0.0045, duration: 1, ease: "power2.inOut" }, "<"
+          // )
+          // .fromTo(
+          //   svgGroup3.position,
+          //   { x: 0, y: 0 },
+          //   { x: 0.35, y: -0.4, duration: 1, ease: "power2.inOut" }, "<"
+          // )
+          // .fromTo(
+          //   platformMesh4.scale,
+          //   { x: 0, y: 0, z: 0 },
+          //   { x: 0.3, y: 0.3, z: 0.3, duration: 1, ease: "power2.inOut" }
+          // )
+          // .fromTo(
+          //   platformMesh4.position,
+          //   { x: 0, y: 0, z: 0 },
+          //   { x: 0.84, y: -0.4, z: 0, duration: 1, ease: "power2.inOut" }
+          // );
       };
+
+      // Raycaster setup
+      const raycaster = new THREE.Raycaster();
+      const pointer = new THREE.Vector2();
+
+      // Click event handler
+      const onPointerDown = (event) => {
+        // Calculate pointer position in normalized device coordinates (-1 to +1)
+        pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+        pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        // Update the picking ray with the camera and pointer position
+        raycaster.setFromCamera(pointer, camera);
+
+        // Calculate objects intersecting the picking ray
+        const intersects = raycaster.intersectObjects([buttonGroup1, buttonGroup2, buttonGroup3], true);
+
+        if (intersects.length > 0) {
+          // Find the parent buttonGroup of the intersected object
+          let buttonGroup = intersects[0].object;
+          while (buttonGroup.parent && !(buttonGroup === buttonGroup1 || buttonGroup === buttonGroup2 || buttonGroup === buttonGroup3)) {
+            buttonGroup = buttonGroup.parent;
+          }
+
+          // Handle button clicks
+          if (buttonGroup === buttonGroup1) {
+            console.log('buttonGroup1');
+            // Mobil cihaz kontrolü
+            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+              window.location.href = 'https://techno-software.com/';
+            } else {
+              window.open('https://techno-software.com/', '_blank');
+            }
+          }
+          else if (buttonGroup === buttonGroup2) {
+            console.log('buttonGroup2');
+            // Mobil cihaz kontrolü
+            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+              window.location.href = 'https://maps.app.goo.gl/X2Yek4JLqDF8g7aTA';
+            } else {
+              window.open('https://maps.app.goo.gl/X2Yek4JLqDF8g7aTA', '_blank');
+            }
+          }
+          else if (buttonGroup === buttonGroup3) {
+            console.log('buttonGroup3');
+            // Mobil cihaz kontrolü
+            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+              // Mobil cihazlar için alternatif yöntem
+              window.location.href = "data:text/x-vcard;urlencoded,BEGIN%3AVCARD%0AVERSION%3A3.0%0AN%3AYap%C4%B1c%C4%B1%3B%C4%B0smail%0AFN%3A%C4%B0smail%20Yap%C4%B1c%C4%B1%0AORG%3ATechno%20Soft%0ATITLE%3ACo-founder%20%26%20CTO%0ATEL%3BTYPE%3DCELL%3A%2B90%20554%20386%207198%0AEMAIL%3Aismail.yapici%40techno-software.com%0AURL%3Ahttps%3A%2F%2Ftechno-software.com%2F%0AADR%3BTYPE%3DWORK%3A%3B%3B%3BTeknopark%20%C4%B0stanbul%3B%3B%3B%0AEND%3AVCARD"
+              // const contactInfo = {
+              //   name: 'İsmail Yapıcı',
+              //   tel: '+90 554 386 7198',
+              //   email: 'ismail.yapici@techno-software.com'
+              // };
+
+              // // iOS için tel ve mailto linklerini kullan
+              // const telLink = document.createElement('a');
+              // telLink.href = `tel:${contactInfo.tel}`;
+              // telLink.click();
+
+              // setTimeout(() => {
+              //   const mailLink = document.createElement('a');
+              //   mailLink.href = `mailto:${contactInfo.email}`;
+              //   mailLink.click();
+              // }, 100);
+            } 
+            // else {
+            //   // Masaüstü için vCard indirme
+            //   const vCardData = `BEGIN:VCARD
+            //     VERSION:3.0
+            //     N:Yapıcı;İsmail
+            //     FN:İsmail Yapıcı
+            //     ORG:Techno Soft
+            //     TITLE:Co-founder & CTO
+            //     TEL;TYPE=CELL:+90 554 386 7198
+            //     EMAIL:ismail.yapici@techno-software.com
+            //     URL:https://techno-software.com/
+            //     ADR;TYPE=WORK:;;Teknopark İstanbul;;;
+            //     END:VCARD`;
+
+            //   const blob = new Blob([vCardData], { type: 'text/vcard;charset=utf-8' });
+            //   const url = window.URL.createObjectURL(blob);
+            //   const link = document.createElement('a');
+            //   link.href = url;
+            //   link.setAttribute('download', 'ismail-yapici.vcf');
+            //   document.body.appendChild(link);
+            //   link.click();
+            //   document.body.removeChild(link);
+            //   window.URL.revokeObjectURL(url);
+            // }
+          }
+        }
+      };
+
+      // Add click event listener
+      document.addEventListener('pointerdown', onPointerDown);
 
       // Animation loop
       await mindarThree.start();
