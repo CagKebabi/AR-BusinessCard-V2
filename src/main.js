@@ -284,6 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
               const shape = shapes[ j ];
               const geometry = new THREE.ShapeGeometry( shape );
               const mesh = new THREE.Mesh( geometry, material );
+              //mesh.rotation.z = Math.PI;
               svgGroup3.add( mesh );
 
             }
@@ -320,7 +321,7 @@ document.addEventListener("DOMContentLoaded", () => {
           
           // SVG grubunu ölçeklendir ve konumlandır
           svgGroup3.scale.set(0.0008, 0.0008, 0.0008); // SVG boyutunu küçült
-          svgGroup3.rotation.z = Math.PI; // SVG'yi döndür
+          svgGroup3.rotation.z = -Math.PI; // SVG'yi döndür (negatif değer kullanarak telefon ikonunun doğru yöne bakmasını sağla)
           //svgGroup2.rotation.y = Math.PI / 2; // SVG'yi yatay konumlandır
           svgGroup3.position.z = 0.08; // SVG'yi öne al (yüksek z değeri)
           
@@ -525,50 +526,39 @@ document.addEventListener("DOMContentLoaded", () => {
           else if (buttonGroup === buttonGroup3) {
             console.log('buttonGroup3');
             // Mobil cihaz kontrolü
-            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
               // Mobil cihazlar için alternatif yöntem
               window.location.href = "data:text/x-vcard;urlencoded,BEGIN%3AVCARD%0AVERSION%3A3.0%0AN%3AYap%C4%B1c%C4%B1%3B%C4%B0smail%0AFN%3A%C4%B0smail%20Yap%C4%B1c%C4%B1%0AORG%3ATechno%20Soft%0ATITLE%3ACo-founder%20%26%20CTO%0ATEL%3BTYPE%3DCELL%3A%2B90%20554%20386%207198%0AEMAIL%3Aismail.yapici%40techno-software.com%0AURL%3Ahttps%3A%2F%2Ftechno-software.com%2F%0AADR%3BTYPE%3DWORK%3A%3B%3B%3BTeknopark%20%C4%B0stanbul%3B%3B%3B%0AEND%3AVCARD"
-              // const contactInfo = {
-              //   name: 'İsmail Yapıcı',
-              //   tel: '+90 554 386 7198',
-              //   email: 'ismail.yapici@techno-software.com'
-              // };
+            } else if (/Android/i.test(navigator.userAgent)) {
+              window.location.href = "intent://contacts/create?name=%C4%B0smail%20Yap%C4%B1c%C4%B1&company=Techno%20Soft&title=Co-founder%20%26%20CTO&phone=%2B90%20554%20386%207198&email=ismail.yapici%40techno-software.com&website=https%3A%2F%2Ftechno-software.com%2F&address=Teknopark%20%C4%B0stanbul#Intent;scheme=content;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/contact;end";
+              // //2.Yöntem
+              // // Android için basitleştirilmiş intent
+              // var intent = "intent:#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/contact;";
+              // intent += "S.name=%C4%B0smail%20Yap%C4%B1c%C4%B1;";
+              // intent += "S.phone=%2B90%20554%20386%207198;";
+              // intent += "S.email=ismail.yapici%40techno-software.com;";
+              // intent += "S.company=Techno%20Soft;";
+              // intent += "end";
+              
+              // window.location.href = intent;
 
-              // // iOS için tel ve mailto linklerini kullan
-              // const telLink = document.createElement('a');
-              // telLink.href = `tel:${contactInfo.tel}`;
-              // telLink.click();
-
-              // setTimeout(() => {
-              //   const mailLink = document.createElement('a');
-              //   mailLink.href = `mailto:${contactInfo.email}`;
-              //   mailLink.click();
-              // }, 100);
-            } 
-            // else {
-            //   // Masaüstü için vCard indirme
-            //   const vCardData = `BEGIN:VCARD
-            //     VERSION:3.0
-            //     N:Yapıcı;İsmail
-            //     FN:İsmail Yapıcı
-            //     ORG:Techno Soft
-            //     TITLE:Co-founder & CTO
-            //     TEL;TYPE=CELL:+90 554 386 7198
-            //     EMAIL:ismail.yapici@techno-software.com
-            //     URL:https://techno-software.com/
-            //     ADR;TYPE=WORK:;;Teknopark İstanbul;;;
-            //     END:VCARD`;
-
-            //   const blob = new Blob([vCardData], { type: 'text/vcard;charset=utf-8' });
-            //   const url = window.URL.createObjectURL(blob);
-            //   const link = document.createElement('a');
-            //   link.href = url;
-            //   link.setAttribute('download', 'ismail-yapici.vcf');
-            //   document.body.appendChild(link);
-            //   link.click();
-            //   document.body.removeChild(link);
-            //   window.URL.revokeObjectURL(url);
-            // }
+              // //3.Yöntem
+              // // 1. yöntem: Doğrudan intent URL
+              // try {
+              //   // 1. yöntem: Doğrudan intent URL
+              //   window.location.href = "intent://contacts/create?name=%C4%B0smail%20Yap%C4%B1c%C4%B1&company=Techno%20Soft&title=Co-founder%20%26%20CTO&phone=%2B90%20554%20386%207198&email=ismail.yapici%40techno-software.com&website=https%3A%2F%2Ftechno-software.com%2F&address=Teknopark%20%C4%B0stanbul#Intent;scheme=content;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/contact;end";
+                
+              //   // 2. yöntem: Zaman aşımı sonrası alternatif çözüm
+              //   setTimeout(function() {
+              //     // İlk yöntem çalışmazsa, VCard dosyasını indir
+              //     window.location.href = "data:text/x-vcard;urlencoded,BEGIN%3AVCARD%0AVERSION%3A3.0%0AN%3AYap%C4%B1c%C4%B1%3B%C4%B0smail%0AFN%3A%C4%B0smail%20Yap%C4%B1c%C4%B1%0AORG%3ATechno%20Soft%0ATITLE%3ACo-founder%20%26%20CTO%0ATEL%3BTYPE%3DCELL%3A%2B90%20554%20386%207198%0AEMAIL%3Aismail.yapici%40techno-software.com%0AURL%3Ahttps%3A%2F%2Ftechno-software.com%2F%0AADR%3BTYPE%3DWORK%3A%3B%3B%3BTeknopark%20%C4%B0stanbul%3B%3B%3B%0AEND%3AVCARD";
+              //   }, 1000);
+              // } catch(e) {
+              //   console.error("Intent URL hatası:", e);
+              //   // Hata durumunda VCard dosyasını indir
+              //   window.location.href = "data:text/x-vcard;urlencoded,BEGIN%3AVCARD%0AVERSION%3A3.0%0AN%3AYap%C4%B1c%C4%B1%3B%C4%B0smail%0AFN%3A%C4%B0smail%20Yap%C4%B1c%C4%B1%0AORG%3ATechno%20Soft%0ATITLE%3ACo-founder%20%26%20CTO%0ATEL%3BTYPE%3DCELL%3A%2B90%20554%20386%207198%0AEMAIL%3Aismail.yapici%40techno-software.com%0AURL%3Ahttps%3A%2F%2Ftechno-software.com%2F%0AADR%3BTYPE%3DWORK%3A%3B%3B%3BTeknopark%20%C4%B0stanbul%3B%3B%3B%0AEND%3AVCARD";
+              // }
+           }
           }
         }
       };
