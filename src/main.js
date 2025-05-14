@@ -6,9 +6,9 @@ import target from "./assets/target.mind?url";
 import gsap from "gsap";
 import { mockWithVideo } from "./libs/camera-mock";
 import { TextureLoader } from "three";
-import websiteIcon from "./assets/website4.svg"
+import websiteIcon from "./assets/website6.svg"
 import locationIcon from "./assets/locationColored2.svg"
-import contactsIcon from "./assets/contacts2.svg"
+import contactsIcon from "./assets/contacts3.svg"
 import buttonMatcapTexture from "./assets/buttonMatcap7.png"
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       }
 
-      //mockWithVideo("./assets/mockvideo.mp4");
+      mockWithVideo("./assets/mockvideo.mp4");
 
       // Kamera erişimi iste
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           
           // SVG grubunu ölçeklendir ve konumlandır
-          svgGroup.scale.set(0.0015, 0.0015, 0.0015); // SVG boyutunu küçült
+          svgGroup.scale.set(0.0008, 0.0008, 0.0008); // SVG boyutunu küçült
           svgGroup.rotation.z = -Math.PI; // SVG'yi döndür
           svgGroup.position.z = 0.08; // SVG'yi öne al (yüksek z değeri)
           
@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const material = new THREE.MeshBasicMaterial( {
               color: color, // path.color yerine color kullan
-              side: THREE.DoubleSide,
+              //side: THREE.DoubleSide,
               depthWrite: true, // Derinlik yazma aktif
               depthTest: true, // Derinlik testi aktif
               transparent: false, // Transparan değil
@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           
           // SVG grubunu ölçeklendir ve konumlandır
-          svgGroup3.scale.set(0.015, 0.015, 0.015); // SVG boyutunu küçült
+          svgGroup3.scale.set(0.0008, 0.0008, 0.0008); // SVG boyutunu küçült
           svgGroup3.rotation.z = Math.PI; // SVG'yi döndür
           //svgGroup2.rotation.y = Math.PI / 2; // SVG'yi yatay konumlandır
           svgGroup3.position.z = 0.08; // SVG'yi öne al (yüksek z değeri)
@@ -445,9 +445,9 @@ document.addEventListener("DOMContentLoaded", () => {
             { x: 0, y: 0, z: 0 },
             { x: 0.35, y: -0.5, z: 0, duration: 0.35, ease: "elastic.out(1,0.75)" }
           )
-          .to(svgGroup.scale,{x:0.002,y:0.002,z:0.002,duration:1.5,ease:"power2.inOut",yoyo:true,repeat:-1},"<")
+          .to(svgGroup.scale,{x:0.001,y:0.001,z:0.001,duration:1.5,ease:"power2.inOut",yoyo:true,repeat:-1},"<")
           .to(svgGroup2.scale,{x:0.001,y:0.001,z:0.001,duration:1.5,ease:"power2.inOut",yoyo:true,repeat:-1},"<")
-          .to(svgGroup3.scale,{x:0.019,y:0.019,z:0.019,duration:1.5,ease:"power2.inOut",yoyo:true,repeat:-1},"<")
+          .to(svgGroup3.scale,{x:0.001,y:0.001,z:0.001,duration:1.5,ease:"power2.inOut",yoyo:true,repeat:-1},"<")
           // .fromTo(
           //   platformMesh3.scale,
           //   { x: 0, y: 0, z: 0 },
